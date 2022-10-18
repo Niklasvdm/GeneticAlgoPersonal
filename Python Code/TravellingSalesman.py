@@ -7,7 +7,10 @@
 # Selection Operator: Minimal length possibly combined with Age value.
 # K-Tournament selection.
 #
+# Recombination: If parts of visitation array (= agent array) are similar, keep similarities and
+# 				introduce variation into array subset that's different.
 #
+# Conversion Test: Example: If improvement over X generations isn't more than 10% of total travel length
 #
 import Reporter
 import numpy as np
