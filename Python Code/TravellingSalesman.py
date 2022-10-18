@@ -1,3 +1,14 @@
+# Cities = [x1,x2,x3,...,xn]
+# Agents = [x4, x5 , ... ] = Order of visitations
+# Variation operator = Execute (random) partial permutation on the agent visitiation list
+# {x1 : { x2 : _ , x3 : _} } Weighted directed graph representation is a nested dictionary. Space complexity not so good, time complexity is nice.
+# ~~~Alternatively: use matrix representation of NxN Matrix with cities
+#
+# Selection Operator: Minimal length possibly combined with Age value.
+# K-Tournament selection.
+#
+#
+#
 import Reporter
 import numpy as np
 
