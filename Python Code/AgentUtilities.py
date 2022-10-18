@@ -1,4 +1,4 @@
-import Agent
+from Agent import Agent
 import numpy as np
 import random
 
@@ -19,15 +19,13 @@ def evaluateAgent(agent, cityGraph):
 
     return pathLength
 
-def crossover(agent_1, agent_2):
+def crossover(agent_1, agent_2,age):
     new_cities = agent_1.cities
     diff_idx = [idx for idx, element in enumerate(agent_1.cities) if agent_2.cities[idx] != agent_1.cities[idx]]
     for i in range(100):
         random_idx_pair = random.sample(diff_idx,2)
-        temp = new_cities[random_idx_pair[0]]
-        new_cities[random_idx_pair[0]] = new_cities[random_idx_pair[1]]
-        new_cities[random_idx_pair[1]] = temp
-    return Agent(0, new_cities)
+        random_idx_pair[0], random_idx_pair[1] = random_idx_pair[1], random_idx_pair[0]
+    return Agent(age, new_cities)
 
 
 # crossoverAgents will combine two agents into a new randomly created agent as a combination of both.
@@ -36,4 +34,4 @@ def crossover(agent_1, agent_2):
 # Returns: The newly created agent.
 #
 def crossoverAgents(agent_1,agent_2,age): #Returns new Agent.
-
+    return
