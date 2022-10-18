@@ -1,5 +1,6 @@
 import Agent
-import numpy
+import numpy as np
+import random
 
 
 # evaluateAgent will return the length of the cycle the agent has.
@@ -7,7 +8,7 @@ import numpy
 def evaluateAgent(agent, cityGraph):
     i = 0
     pathLength = 0
-    cities : numpy.array = agent.cities
+    cities : np.array = agent.cities
     while i != cities.size - 1:
         city_0 = cities[i]
         city_1 = cities[i+1]
@@ -17,6 +18,16 @@ def evaluateAgent(agent, cityGraph):
     pathLength += cityGraph[i][0]
 
     return pathLength
+
+def crossover(agent_1, agent_2):
+    new_cities = agent_1.cities
+    diff_idx = [idx for idx, element in enumerate(agent_1.cities) if agent_2.cities[idx] != agent_1.cities[idx]]
+    for i in range(100):
+        random_idx_pair = random.sample(diff_idx,2)
+        temp = new_cities[random_idx_pair[0]]
+        new_cities[random_idx_pair[0]] = new_cities[random_idx_pair[1]]
+        new_cities[random_idx_pair[1]] = temp
+    return Agent(0, new_cities)
 
 
 # crossoverAgents will combine two agents into a new randomly created agent as a combination of both.
