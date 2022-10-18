@@ -8,10 +8,10 @@ import random
 def evaluateAgent(agent, cityGraph):
     i = 0
     pathLength = 0
-    cities : np.array = agent.cities
+    cities: np.array = agent.cities
     while i != cities.size - 1:
         city_0 = cities[i]
-        city_1 = cities[i+1]
+        city_1 = cities[i + 1]
 
         pathLength += cityGraph[city_0][city_1]
         i += 1
@@ -19,11 +19,12 @@ def evaluateAgent(agent, cityGraph):
 
     return pathLength
 
-def crossover(agent_1, agent_2,age):
+
+def crossover(agent_1, agent_2, age):
     new_cities = agent_1.cities
     diff_idx = [idx for idx, element in enumerate(agent_1.cities) if agent_2.cities[idx] != agent_1.cities[idx]]
     for i in range(100):
-        random_idx_pair = random.sample(diff_idx,2)
+        random_idx_pair = random.sample(diff_idx, 2)
         random_idx_pair[0], random_idx_pair[1] = random_idx_pair[1], random_idx_pair[0]
     return Agent(age, new_cities)
 
@@ -33,5 +34,36 @@ def crossover(agent_1, agent_2,age):
 #           | Age: the current cycle of the generational Algorithm, will be passed down onto the newly created agent.
 # Returns: The newly created agent.
 #
-def crossoverAgents(agent_1,agent_2,age): #Returns new Agent.
-    return
+def crossoverAgents(agent_1, agent_2, age):  # Returns new Agent.
+    agent_1: Agent
+    agent_2: Agent
+    # Create array where True if agent_1.cities[i] == agent_2.cities[i]
+    visitSameCities: [bool] = [(i == j) for (i, j) in np.column_stack((agent_1.cities, agent_2.cities))]
+    # differentCities = [agent_1.cities[i] if not visitSameCities[i] else continue for i in range(len(visitSameCities))]
+    differentCities = np.array([])
+    # Create array where all different cities representations are put into a new array
+    for i in range(len(visitSameCities)):
+        if not visitSameCities[i]:
+            differentCities = np.append(differentCities, [agent_1.cities[i]])
+
+    random.shuffle(differentCities)
+    newAgentCities = agent_1.cities.copy()
+
+    j = 0
+    for i in range(newAgentCities.size):
+        if not visitSameCities[i]:
+            newAgentCities[i] = differentCities[j]
+            j += 1
+
+    return Agent(age, newAgentCities)
+
+
+array1 = np.array([i for i in range(10)])
+array2 = array1.copy()
+random.shuffle(array2)
+randomAgent1 = Agent(0, array1)
+randomAgent2 = Agent(0, array2)
+randomAgent3 = crossoverAgents(randomAgent1, randomAgent2, 1)
+print("First Agent array", randomAgent1.cities)
+print("Second Agent array", randomAgent2.cities)
+print("Third Agent array", randomAgent3.cities)
