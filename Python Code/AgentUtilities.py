@@ -19,8 +19,12 @@ def evaluateAgent(agent, cityGraph):
 
     return pathLength
 
-
-def crossover(agent_1, agent_2, age):
+# crossoverAgents will combine two agents into a new randomly created agent as a combination of both.
+# Parameters: agent_1 and agent_2, the two parents of the newly created agent
+#           | Age: the current cycle of the generational Algorithm, will be passed down onto the newly created agent.
+# Returns: The newly created agent.
+#
+def crossoverAgents(agent_1, agent_2, age):
     new_cities = agent_1.cities
     diff_idx = [idx for idx, element in enumerate(agent_1.cities) if agent_2.cities[idx] != agent_1.cities[idx]]
     for i in range(100):
@@ -29,33 +33,7 @@ def crossover(agent_1, agent_2, age):
     return Agent(age, new_cities)
 
 
-# crossoverAgents will combine two agents into a new randomly created agent as a combination of both.
-# Parameters: agent_1 and agent_2, the two parents of the newly created agent
-#           | Age: the current cycle of the generational Algorithm, will be passed down onto the newly created agent.
-# Returns: The newly created agent.
-#
-def crossoverAgents(agent_1, agent_2, age):  # Returns new Agent.
-    agent_1: Agent
-    agent_2: Agent
-    # Create array where True if agent_1.cities[i] == agent_2.cities[i]
-    visitSameCities: [bool] = [(i == j) for (i, j) in np.column_stack((agent_1.cities, agent_2.cities))]
-    # differentCities = [agent_1.cities[i] if not visitSameCities[i] else continue for i in range(len(visitSameCities))]
-    differentCities = np.array([])
-    # Create array where all different cities representations are put into a new array
-    for i in range(len(visitSameCities)):
-        if not visitSameCities[i]:
-            differentCities = np.append(differentCities, [agent_1.cities[i]])
 
-    random.shuffle(differentCities)
-    newAgentCities = agent_1.cities.copy()
-
-    j = 0
-    for i in range(newAgentCities.size):
-        if not visitSameCities[i]:
-            newAgentCities[i] = differentCities[j]
-            j += 1
-
-    return Agent(age, newAgentCities)
 
 
 array1 = np.array([i for i in range(10)])
