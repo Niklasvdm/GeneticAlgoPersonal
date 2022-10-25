@@ -2,7 +2,7 @@ import numpy
 
 
 class Agent:
-    cities : numpy.array
+    cities : list[int]
     age : int
 
 
