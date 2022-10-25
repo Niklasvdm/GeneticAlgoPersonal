@@ -18,11 +18,10 @@ class Agent:
     # 1. Amount of permutations: Represents the amount of random switches within the cities array
     # 2. Probability of Permutations: if random no. between [0;1] is smaller than prob. then switch will occur.
     def mutate(self, amount_of_permutations, probability_of_permutation):
-        permutated_cities = self.cities
         for i in range(amount_of_permutations):
             if random.random() < probability_of_permutation:
-                randa = random.randrange(len(permutated_cities))
-                randb = random.randrange(len(permutated_cities))
-                i[randa], i[randb] = i[randb], i[randa]
+                randa = random.randrange(len(self.cities))
+                randb = random.randrange(len(self.cities))
+                self.cities[randa], self.cities[randb] = self.cities[randb], self.cities[randa]
 
 
