@@ -22,7 +22,7 @@ class Population:
         self.graph = graph
         self.agents = [Agent(0, random.sample(cities, len(cities))) for i in range(population_size)]
         self.amount_of_permutations = len(cities) // 2
-        self.probability_of_permutation = 0.8
+        self.probability_of_permutation = 0.3
         self.k = 5
 
     # # Select top x agents with the highest fitness
