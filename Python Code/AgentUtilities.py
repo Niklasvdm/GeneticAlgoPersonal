@@ -27,13 +27,13 @@ def evaluateAgent(agent, cityGraph):
 # Returns: The newly created agent.
 #
 def crossoverAgents(agent_1, agent_2, age):
-    new_cities = agent_1.cities
+    new_cities = [city for city in agent_1.cities]
 
     diff_idx = [idx for idx, element in enumerate(agent_1.cities) if agent_2.cities[idx] != agent_1.cities[idx]]
     if len(diff_idx) >= 2:
         for i in range(100):
             random_idx_pair = random.sample(diff_idx, 2)
-            random_idx_pair[0], random_idx_pair[1] = random_idx_pair[1], random_idx_pair[0]
+            new_cities[random_idx_pair[0]], new_cities[random_idx_pair[1]] = new_cities[random_idx_pair[1]], new_cities[random_idx_pair[0]]
     return Agent(age, new_cities)
 
 
