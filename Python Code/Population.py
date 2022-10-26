@@ -48,10 +48,15 @@ class Population:
         while len(self.agents) > self.size:
             self.agents.remove(self.kTournamentElimination())
 
+    # K Tournament Elimination Mechanism
+    # Returns agent.
     def kTournamentElimination(self):
+        #Random sample of k agents
         agent_sample = random.sample(self.agents, self.k)
+        #Calculate Samples.
         fitness_scores = [evaluateAgent(agent, self.graph) for agent in agent_sample]
-        return self.agents[fitness_scores.index(max(fitness_scores))]
+
+        return agent_sample[fitness_scores.index(max(fitness_scores))]
 
     def kTournamentSelection(self):
         agent_sample = random.sample(self.agents, self.k)
