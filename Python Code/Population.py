@@ -21,7 +21,7 @@ class Population:
         self.cities = cities
         self.graph = graph
         self.agents = [Agent(0, random.sample(cities, len(cities))) for i in range(population_size)]
-        self.amount_of_permutations = len(cities) // 2
+        self.amount_of_permutations = 2
         self.probability_of_permutation = 0.3
         self.k = 5
 
@@ -37,7 +37,7 @@ class Population:
 
     # Crossover agents selected by top k tournament selection
     def crossover(self):
-        for i in range(self.size // 2):
+        for i in range(self.size//3):
             parent1 = self.kTournamentSelection()
             parent2 = self.kTournamentSelection()
             child = crossoverAgents(parent1, parent2, self.age)
@@ -51,12 +51,12 @@ class Population:
     def kTournamentElimination(self):
         agent_sample = random.sample(self.agents, self.k)
         fitness_scores = [evaluateAgent(agent, self.graph) for agent in agent_sample]
-        return self.agents[fitness_scores.index(max(fitness_scores))]
+        return self.agents[self.agents.index(agent_sample[fitness_scores.index(max(fitness_scores))])]
 
     def kTournamentSelection(self):
         agent_sample = random.sample(self.agents, self.k)
         fitness_scores = [evaluateAgent(agent, self.graph) for agent in agent_sample]
-        return self.agents[fitness_scores.index(min(fitness_scores))]
+        return self.agents[self.agents.index(agent_sample[fitness_scores.index(min(fitness_scores))])]
 
     def getObjectiveValues(self):
         fitness_scores = [evaluateAgent(agent, self.graph) for agent in self.agents]

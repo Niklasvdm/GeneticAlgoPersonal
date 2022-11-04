@@ -4,9 +4,8 @@ import numpy
 
 
 class Agent:
-    cities : list[int]
-    age : int
-
+    cities: list[int]
+    age: int
 
     # Initiate Agent with age and list of cities in order of visitation.
     #
@@ -23,5 +22,3 @@ class Agent:
                 randa = random.randrange(len(self.cities))
                 randb = random.randrange(len(self.cities))
                 self.cities[randa], self.cities[randb] = self.cities[randb], self.cities[randa]
-
-

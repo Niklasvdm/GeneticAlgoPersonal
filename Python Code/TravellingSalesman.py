@@ -15,7 +15,7 @@
 import Reporter
 import numpy as np
 from Population import Population
-
+import matplotlib as plt
 
 # Modify the class name to match your student number.
 class r0123456:
@@ -31,13 +31,21 @@ class r0123456:
         file.close()
 
         cities = list(range(distanceMatrix[0].size))
-        population = Population(200, distanceMatrix, cities)
+        population = Population(1000, distanceMatrix, cities)
         # Your code here.
         yourConvergenceTestsHere = True
         min_score, avg_score = 0, 0
         bestSolution = []
+        x_val = 0
 
-        while avg_score >= min_score * 1.01 or avg_score == 0:
+        min_scores = []
+        x = []
+
+        runs = 0
+        while avg_score >= min_score * 1.05 or avg_score == 0:
+            runs+=1
+            if runs>50:
+                break
             print(min_score, avg_score)
             # Your code here.
             population.crossover()
@@ -49,12 +57,22 @@ class r0123456:
             #  - a 1D numpy array in the cycle notation containing the best solution
             #    with city numbering starting from 0
             min_score, avg_score, bestSolution = population.getObjectiveValues()
+            min_scores.append(min_score)
+
+            x_val += 10
+            x.append(x_val)
+
             timeLeft = self.reporter.report(avg_score, min_score, np.array(bestSolution))
             if timeLeft < 0:
                 break
 
         # Your code here.
         print(min_score, avg_score, bestSolution)
+        plt.title("Line graph")
+        plt.xlabel("X axis")
+        plt.ylabel("Y axis")
+        plt.plot(x, min_scores, color="red")
+        plt.show()
         return 0
 
 
