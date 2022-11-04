@@ -21,7 +21,7 @@ class Population:
         self.cities = cities
         self.graph = graph
         self.agents = [Agent(0, random.sample(cities, len(cities))) for i in range(population_size)]
-        self.amount_of_permutations = 2
+        self.amount_of_permutations = len(cities)//10
         self.probability_of_permutation = 0.3
         self.k = 25
 
