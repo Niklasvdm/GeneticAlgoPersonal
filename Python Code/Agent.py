@@ -18,7 +18,9 @@ class Agent:
     # 2. Probability of Permutations: if random no. between [0;1] is smaller than prob. then switch will occur.
     def mutate(self, amount_of_permutations, probability_of_permutation):
         for i in range(amount_of_permutations):
-            if random.random() < probability_of_permutation:
+            randomInt = random.random()
+            #print("The random int generated is: ", randomInt , " And the prob. of permutation is: " , probability_of_permutation)
+            if randomInt < probability_of_permutation:
                 randa = random.randrange(len(self.cities))
                 randb = random.randrange(len(self.cities))
                 self.cities[randa], self.cities[randb] = self.cities[randb], self.cities[randa]
