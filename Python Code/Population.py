@@ -23,7 +23,7 @@ class Population:
         self.agents = [Agent(0, random.sample(cities, len(cities))) for i in range(population_size)]
         self.amount_of_permutations = 2
         self.probability_of_permutation = 0.3
-        self.k = 5
+        self.k = 25
 
     # # Select top x agents with the highest fitness
     # def select(self):
@@ -37,7 +37,7 @@ class Population:
 
     # Crossover agents selected by top k tournament selection
     def crossover(self):
-        for i in range(self.size//3):
+        for i in range(self.size):
             parent1 = self.kTournamentSelection()
             parent2 = self.kTournamentSelection()
             child = crossoverAgents(parent1, parent2, self.age)

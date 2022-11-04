@@ -15,7 +15,8 @@
 import Reporter
 import numpy as np
 from Population import Population
-import matplotlib as plt
+import matplotlib.pyplot as plt
+
 
 # Modify the class name to match your student number.
 class r0123456:
@@ -31,7 +32,7 @@ class r0123456:
         file.close()
 
         cities = list(range(distanceMatrix[0].size))
-        population = Population(1000, distanceMatrix, cities)
+        population = Population(400, distanceMatrix, cities)
         # Your code here.
         yourConvergenceTestsHere = True
         min_score, avg_score = 0, 0
@@ -39,6 +40,7 @@ class r0123456:
         x_val = 0
 
         min_scores = []
+        avg_scores = []
         x = []
 
         runs = 0
@@ -58,6 +60,7 @@ class r0123456:
             #    with city numbering starting from 0
             min_score, avg_score, bestSolution = population.getObjectiveValues()
             min_scores.append(min_score)
+            avg_scores.append(avg_score)
 
             x_val += 10
             x.append(x_val)
@@ -68,10 +71,10 @@ class r0123456:
 
         # Your code here.
         print(min_score, avg_score, bestSolution)
-        plt.title("Line graph")
         plt.xlabel("X axis")
         plt.ylabel("Y axis")
         plt.plot(x, min_scores, color="red")
+        plt.plot(x, avg_scores, color="blue")
         plt.show()
         return 0
 
