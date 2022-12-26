@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 
 # Modify the class name to match your student number.
-class r0123456:
+class r0736356:
 
     def __init__(self):
         self.reporter = Reporter.Reporter(self.__class__.__name__)
@@ -32,8 +32,11 @@ class r0123456:
         file.close()
 
         cities = list(range(distanceMatrix[0].size))
-        population = Population(400, distanceMatrix, cities)
+
         # Your code here.
+        population = Population(200, distanceMatrix, cities)
+        counter = 0
+        resetCounter = 3
         yourConvergenceTestsHere = True
         min_score, avg_score = 0, 0
         bestSolution = []
@@ -44,10 +47,12 @@ class r0123456:
         x = []
 
         runs = 0
-        while avg_score >= min_score * 1.05 or avg_score == 0:
+        while avg_score >= min_score * 1.005 or avg_score == 0:
             runs+=1
-            if runs>50:
+            if runs>500:
+                print("I've reached 50 runs")
                 break
+
             print(min_score, avg_score)
             # Your code here.
             population.crossover()
@@ -59,6 +64,22 @@ class r0123456:
             #  - a 1D numpy array in the cycle notation containing the best solution
             #    with city numbering starting from 0
             min_score, avg_score, bestSolution = population.getObjectiveValues()
+            if len(min_scores) > 10 and min_score == min_scores[-1]:
+                counter += 1
+            else:
+                counter = 0
+
+            if counter >= 3 and resetCounter <= 0:
+                population.probability_of_permutation = 0.7
+                population.amount_of_permutations = len(cities)//5
+                resetCounter = 5
+                population.pathManipulator.introduce_infinities(len(cities)//1000)
+            else:
+                resetCounter = resetCounter - 1
+                population.probability_of_permutation = 0.3
+                population.amount_of_permutations = len(cities)//10
+
+
             min_scores.append(min_score)
             avg_scores.append(avg_score)
 
@@ -67,6 +88,7 @@ class r0123456:
 
             timeLeft = self.reporter.report(avg_score, min_score, np.array(bestSolution))
             if timeLeft < 0:
+                print("NO MORE TIME LEFT,STOPPING EXECUTION")
                 break
 
         # Your code here.
@@ -80,5 +102,5 @@ class r0123456:
 
 
 if __name__ == "__main__":
-    tsproblem = r0123456()
-    tsproblem.optimize("tour50.csv")
+    tsproblem = r0736356()
+    tsproblem.optimize("/home/Universiteit/GeneticAlgorithms/tours/tour250.csv")
