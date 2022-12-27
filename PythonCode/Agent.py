@@ -1,18 +1,23 @@
 import random
 
 import numpy as np
-#from AgentUtilities import evaluateAgent
+import PathManipulator
+from math import isinf
 
 
 class Agent:
     cities: list[int]
     age: int
+    score : int
+    hasBeenModified : bool
 
     # Initiate Agent with age and list of cities in order of visitation.
     #
     def __init__(self, age, cities):
         self.cities = cities
         self.age = age
+        self.score = 0
+        self.hasBeenModified = True
 
     # Function that'll change the internal cities array depending on 2 parameters
     # 1. Amount of permutations: Represents the amount of random switches within the cities array
@@ -25,6 +30,7 @@ class Agent:
                 randa = random.randrange(len(self.cities))
                 randb = random.randrange(len(self.cities))
                 self.cities[randa], self.cities[randb] = self.cities[randb], self.cities[randa]
+        self.hasBeenModified = True
 
 
     def mutateLocalSearch(self, distanceMatrix : np.array, depth : int):
@@ -43,6 +49,8 @@ class Agent:
 
             idxOfClosestCity = np.where(self.cities == closestcity)
             self.cities[i+1],self.cities[idxOfClosestCity[0]] = self.cities[idxOfClosestCity[0]],self.cities[i+1]
+
+
 
     #def three_opt(self, distanceMatrix: np.array):
         # Set the improvement threshold
@@ -82,3 +90,38 @@ class Agent:
 
                     # Update the current solution
                     # self.cities = best_solution
+
+    def evaluateAgent(self,distanceMatrix : np.array) -> int:
+        if not self.hasBeenModified:
+            return self.score
+        else:
+            i = 0
+            pathLength = 0
+            cities: np.array = self.cities
+            while i != len(cities) - 1:
+                city_0 = cities[i]
+                city_1 = cities[i + 1]
+
+                if not isinf(distanceMatrix[city_0][city_1]):
+                    pathLength += distanceMatrix[city_0][city_1]
+                else:
+                    pathLength *= 2
+                i += 1
+            pathLength += distanceMatrix[i][0]
+
+            self.score = pathLength
+            self.hasBeenModified = False
+            return pathLength
+
+
+    def mutateEliminateInfs(self, amount_of_permutations, probability_of_permutation,pathManipulator : PathManipulator):
+        for i in range(amount_of_permutations):
+            randomInt = random.random()
+            #print("The random int generated is: ", randomInt , " And the prob. of permutation is: " , probability_of_permutation)
+            if randomInt < probability_of_permutation:
+                randa = random.randrange(len(self.cities))
+                randb = random.randrange(len(self.cities))
+                self.cities[randa], self.cities[randb] = self.cities[randb], self.cities[randa]
+
+        self.cities = pathManipulator.remove_infinite_path_closest_city(self.cities)
+        self.hasBeenModified = True

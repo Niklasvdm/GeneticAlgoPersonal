@@ -19,6 +19,7 @@ def evaluateAgent(agent, cityGraph):
             pathLength += cityGraph[city_0][city_1]
         else:
             pathLength *= 2
+            print("Inf present in path!")
         i += 1
     pathLength += cityGraph[i][0]
 

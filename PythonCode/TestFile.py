@@ -1,7 +1,7 @@
 import PathManipulator
 from Population import Population
 import numpy as np
-from TestUtilFunctions import has_duplicates
+from TestUtilFunctions import has_duplicates,fitness_sharing
 from AgentUtilities import mutateLocalSearch
 
 file = open("/home/Universiteit/GeneticAlgorithms/tours/tour50.csv")
@@ -28,6 +28,9 @@ print(arr)
 
 
 for _ in range(50):
+    print(population.pathManipulator.shortest_n(5))
+    continue
+    print("HELLO")
     population.crossover()
     population.mutate()
     population.eliminate()
