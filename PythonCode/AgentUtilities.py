@@ -64,7 +64,7 @@ def crossoverAgents(agent_1, agent_2, age):
                     new_cities[i] = city
                     break
 
-    return Agent(age, new_cities)
+    return Agent(age, np.array(new_cities))
 
 
 
@@ -131,6 +131,7 @@ def CX2_crossover(cities1: np.array, cities2: np.array,age : int) -> tuple[Agent
         j = i
         while not visited1[j]:
             visited1[j] = True
+            k = np.where(cities1 == cities2[j])
             j = np.where(cities1 == cities2[j])[0][0]
             cycle1.append(j)
 

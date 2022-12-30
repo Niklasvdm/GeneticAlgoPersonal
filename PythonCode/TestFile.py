@@ -24,18 +24,13 @@ def verifyInf():
 
 arr = np.array([i for i in range(50)])
 mutateLocalSearch(arr,population.pathManipulator.copy,5,0)
-print(arr)
+#print(arr)
 
 
-for _ in range(50):
-    print(population.pathManipulator.shortest_n(5))
-    continue
-    print("HELLO")
-    population.crossover()
-    population.mutate()
-    population.eliminate()
-
-    for agent in population.agents:
-        if has_duplicates(agent.cities):
-            print("FUCK YOU!!")
-            print(agent.cities)
+for agent in population.agents:
+    print(agent.cities)
+    cities1 = population.pathManipulator.two_opt(agent.cities,agent.evaluateAgent(population.pathManipulator.copy))
+    print(cities1 , population.pathManipulator.eval_agent(cities1)," contains duplicats: ", has_duplicates(cities1), " has infs: ", population.pathManipulator.has_infinite_path(cities1))
+    cities2 = population.pathManipulator.two_opt_alt(agent.cities, agent.evaluateAgent(population.pathManipulator.copy))
+    print(cities2, population.pathManipulator.eval_agent(cities2),"Contains Duplicates: ", has_duplicates(cities2), " has infs: ", population.pathManipulator.has_infinite_path(cities2))
+    print (list([elem1 == elem2 for (elem1,elem2) in zip(agent.cities,cities2)]))

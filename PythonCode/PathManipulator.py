@@ -25,9 +25,26 @@ class PathManipulator:
             if not self.original[city_0][city_1] == np.inf:
                 pathLength += self.original[city_0][city_1]
             else:
-                pathLength *= 2
+                pathLength += 100000
+                #print("Shpuldn't happen, Eval_Agent")
             i += 1
-        pathLength += self.original[i][0]
+        pathLength += self.original[cities[i]][cities[0]]
+
+        return pathLength
+
+    def eval_subpath(self,cities : np.array) -> int:
+        i = 0
+        pathLength = 0
+        while i != len(cities) - 1:
+            city_0 = cities[i]
+            city_1 = cities[i + 1]
+
+            if not self.original[city_0][city_1] == np.inf:
+                pathLength += self.original[city_0][city_1]
+            else:
+                pathLength += 100000
+                #print("Shouldn't happen, eval subpath")
+            i += 1
 
         return pathLength
 
@@ -37,9 +54,11 @@ class PathManipulator:
             return False
 
         # Check if any two consecutive elements in the array have an infinite distance between them
-        for i in range(cities.size - 1):
+        for i in range(cities.size -1):
             if self.copy[cities[i]][cities[i + 1]] == np.inf:
                 return True
+        if(self.copy[cities[-1]][cities[0]]) == np.inf:
+            return True
 
         # If none of the above conditions are met, return False
         return False
@@ -60,6 +79,14 @@ class PathManipulator:
                         break
                 else:
                     raise ValueError("No suitable element found to swap with")
+        if (self.copy[cities[-1]][cities[0]]) == np.inf:
+            for i in range(1,cities.size - 2):
+                if self.copy[cities[i]][cities[0]] != np.inf \
+                        and self.copy[cities[-2]][cities[i]] != np.inf \
+                        and self.copy[cities[i - 1]][cities[-1]] != np.inf \
+                        and self.copy[cities[i + 1]][cities[-1]] != np.inf:
+                    cities[i], cities[-1] = cities[-1], cities[i]
+                    break
 
         return cities
 
@@ -97,6 +124,32 @@ class PathManipulator:
                 #     raise ValueError("No suitable element found to swap with")
 
         return cities
+
+
+    def hard_remove_infs(self,cities : np.array) -> np.array:
+        while self.eval_agent(cities) == np.inf:
+            for i in range(len(cities) - 1):
+                if self.copy[cities[i]][cities[i + 1]] == np.inf:
+                    # Find another element to swap with
+                    for j in range(1, cities.size - 1):
+                        if j != i and j != i + 1 and self.copy[cities[i]][cities[j]] != np.inf \
+                                and self.copy[cities[j - 1]][cities[i + 1]] != np.inf \
+                                and self.copy[cities[i + 1]][cities[j + 1]] != np.inf:
+                            cities[i + 1], cities[j] = cities[j], cities[i + 1]
+                            break
+                    else:
+                        raise ValueError("No suitable element found to swap with")
+            if (self.copy[cities[-1]][cities[0]]) == np.inf:
+                for i in range(1, cities.size - 2):
+                    if self.copy[cities[i]][cities[0]] != np.inf \
+                            and self.copy[cities[-2]][cities[i]] != np.inf \
+                            and self.copy[cities[i - 1]][cities[-1]] != np.inf \
+                            and self.copy[cities[i + 1]][cities[-1]] != np.inf:
+                        cities[i], cities[-1] = cities[-1], cities[i]
+                        break
+
+        return cities
+
 
     def introduce_infinities(self,amountOfInfinities):
         self.copy = np.copy(self.original)
@@ -193,3 +246,126 @@ class PathManipulator:
                                        path[swap_last:-len(path) + swap_first - 1:-1],
                                        path[swap_last + 1:len(path)]))
         return path_updated
+
+    # Code inspired by https://github.com/pdrm83/py2opt/blob/master/py2opt/solver.py
+    def two_opt_alt(self, cities : np.array,heuristic : int, improvement_threshold=0.01) -> np.array:
+        copy = np.copy(cities)
+        best_distance = heuristic
+
+        #self.best_route = self.initial_route
+        #self.best_distance = self.calculate_path_dist(self.distance_matrix, self.best_route)
+        improvement_factor = 1
+
+        while improvement_factor > improvement_threshold:
+            previous_best = best_distance
+            for swap_first in range(1, cities.size - 2):
+                mutated :bool  = True
+                for swap_last in range(swap_first + 1, cities.size - 1):
+                    if mutated:
+                        partOnePath = copy[0:swap_first]
+                        partOnePathEval = self.eval_subpath(partOnePath)
+                        before_start = copy[swap_first - 1]
+                        start = copy[swap_first]
+                        mutated = False
+                    end = copy[swap_last]
+                    after_end = copy[swap_last + 1]
+                    before = self.original[before_start][start] + self.original[end][after_end]
+                    after = self.original[before_start][end] + self.original[start][after_end]
+                    if after < before:
+                        mutated = True
+                        partTwoPath = copy[swap_last:-len(cities)+swap_first-1:-1]
+                        partTwoPathEval = self.eval_subpath(partTwoPath)
+                        partThreePath = copy[swap_last+1:len(cities)]
+                        partThreePathEval = self.eval_subpath(partThreePath)
+                        new_route = np.concatenate((partOnePath,partTwoPath,partThreePath))
+                        new_distance = partOnePathEval + self.original[partOnePath[-1]][partTwoPath[0]] \
+                                       + partTwoPathEval + self.original[partTwoPath[-1]][partThreePath[0]]\
+                                       + partThreePathEval + self.original[partThreePath[-1]][partOnePath[0]]
+
+                        copy = new_route
+                        best_distance = new_distance
+
+            improvement_factor = 1 - best_distance / previous_best
+        return copy
+
+    def two_opt_alt_alt(self, cities : np.array,heuristic : int, improvement_threshold=0.01) -> np.array:
+        copy = np.copy(cities)
+        best_distance = heuristic
+
+        #self.best_route = self.initial_route
+        #self.best_distance = self.calculate_path_dist(self.distance_matrix, self.best_route)
+        improvement_factor = 1
+
+        while improvement_factor > improvement_threshold:
+            previous_best = best_distance
+            for swap_first in range(1, cities.size - 2):
+                mutated :bool  = True
+                for swap_last in range(swap_first + 1, cities.size - 1):
+                    if mutated:
+                        partOnePath = copy[0:swap_first]
+                        partOnePathEval = self.eval_subpath(partOnePath)
+                        before_start = copy[swap_first - 1]
+                        start = copy[swap_first]
+                        mutated = False
+                    end = copy[swap_last]
+                    after_end = copy[swap_last + 1]
+                    before = self.copy[before_start][start] + self.copy[end][after_end]
+                    after = self.copy[before_start][end] + self.copy[start][after_end]
+                    if after < before:
+                        mutated = True
+                        partTwoPath = copy[swap_last:-len(cities)+swap_first-1:-1]
+                        partTwoPathEval = self.eval_subpath(partTwoPath)
+                        partThreePath = copy[swap_last+1:len(cities)]
+                        partThreePathEval = self.eval_subpath(partThreePath)
+                        new_route = np.concatenate((partOnePath,partTwoPath,partThreePath))
+                        new_distance = partOnePathEval + self.original[partOnePath[-1]][partTwoPath[0]] \
+                                       + partTwoPathEval + self.original[partTwoPath[-1]][partThreePath[0]]\
+                                       + partThreePathEval + self.original[partThreePath[-1]][partOnePath[0]]
+
+                        copy = new_route
+                        best_distance = new_distance
+
+            improvement_factor = 1 - best_distance / previous_best
+        return copy
+
+    def two_opt_ranomized(self, cities : np.array,heuristic : int, improvement_threshold=0.01) -> np.array:
+        copy = np.copy(cities)
+        best_distance = heuristic
+
+        #self.best_route = self.initial_route
+        #self.best_distance = self.calculate_path_dist(self.distance_matrix, self.best_route)
+        improvement_factor = 1
+
+        while improvement_factor > improvement_threshold:
+            previous_best = best_distance
+            swap_first = random.randrange(1,cities.size - 1)
+            while swap_first != cities.size-2:
+                mutated :bool  = True
+                for swap_last in range(swap_first + 1, cities.size - 1):
+                    if mutated:
+                        partOnePath = copy[0:swap_first]
+                        partOnePathEval = self.eval_subpath(partOnePath)
+                        before_start = copy[swap_first - 1]
+                        start = copy[swap_first]
+                        mutated = False
+                    end = copy[swap_last]
+                    after_end = copy[swap_last + 1]
+                    before = self.copy[before_start][start] + self.copy[end][after_end]
+                    after = self.copy[before_start][end] + self.copy[start][after_end]
+                    if after < before:
+                        mutated = True
+                        partTwoPath = copy[swap_last:-len(cities)+swap_first-1:-1]
+                        partTwoPathEval = self.eval_subpath(partTwoPath)
+                        partThreePath = copy[swap_last+1:len(cities)]
+                        partThreePathEval = self.eval_subpath(partThreePath)
+                        new_route = np.concatenate((partOnePath,partTwoPath,partThreePath))
+                        new_distance = partOnePathEval + self.original[partOnePath[-1]][partTwoPath[0]] \
+                                       + partTwoPathEval + self.original[partTwoPath[-1]][partThreePath[0]]\
+                                       + partThreePathEval + self.original[partThreePath[-1]][partOnePath[0]]
+
+                        copy = new_route
+                        best_distance = new_distance
+                swap_first += 1
+
+            improvement_factor = 1 - best_distance / previous_best
+        return copy

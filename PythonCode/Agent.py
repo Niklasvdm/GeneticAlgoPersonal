@@ -18,6 +18,7 @@ class Agent:
         self.age = age
         self.score = 0
         self.hasBeenModified = True
+        self.isBestAgent = False
 
     # Function that'll change the internal cities array depending on 2 parameters
     # 1. Amount of permutations: Represents the amount of random switches within the cities array
@@ -107,7 +108,7 @@ class Agent:
                 else:
                     pathLength *= 2
                 i += 1
-            pathLength += distanceMatrix[i][0]
+            pathLength += distanceMatrix[cities[i]][cities[0]]
 
             self.score = pathLength
             self.hasBeenModified = False
@@ -115,6 +116,9 @@ class Agent:
 
 
     def mutateEliminateInfs(self, amount_of_permutations, probability_of_permutation,pathManipulator : PathManipulator):
+        if self.isBestAgent:
+            return
+
         for i in range(amount_of_permutations):
             randomInt = random.random()
             #print("The random int generated is: ", randomInt , " And the prob. of permutation is: " , probability_of_permutation)
