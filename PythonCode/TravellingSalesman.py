@@ -37,7 +37,7 @@ class r0736356:
         cities = list(range(distanceMatrix[0].size))
 
         # Your code here.
-        population = Population(25, distanceMatrix, cities)
+        population = Population(50, distanceMatrix, cities)
         counter = 0
         resetCounter = 3
         yourConvergenceTestsHere = True
@@ -46,7 +46,7 @@ class r0736356:
         bestSolution = []
         x_val = 0
 
-        MAX_RUNS = 15
+        MAX_RUNS = 31
 
         min_scores = []
         avg_scores = []
@@ -72,10 +72,10 @@ class r0736356:
                 #population.applyTwoOpt()
                 #population.applyTwoOptRandomized()
                 pass
-            elif runs % 4 == 0 or runs % 4 == 2:
+            elif runs % 4 == 0:# or runs % 4 == 2:
                 #population.applyTwoOptRandomized()
-                #population.applyTwoOpt()
-                population.applyTwoOptRandomSubset()
+                population.applyTwoOpt()
+                #population.applyTwoOptRandomSubset()
                 #os.environ["CROSSOVER"] = "OPTEXCLUSIVITY"
             elif runs % 4 == 1:# or runs % 4 == 3:
                 os.environ["CROSSOVER"] = "CYCLE2"
@@ -191,4 +191,4 @@ class r0736356:
 
 if __name__ == "__main__":
     tsproblem = r0736356()
-    tsproblem.optimize("/home/Universiteit/GeneticAlgorithms/tours/tour1000.csv")
+    tsproblem.optimize("/home/Universiteit/GeneticAlgorithms/tours/tour250.csv")

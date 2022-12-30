@@ -389,7 +389,7 @@ class r0736356:
         while(current_generation != max_generations):
             current_generation += 1
             # First check if there needs to be a two_opt execution
-            if population_size == 200 and current_generation % 4 == 0:
+            if population_size >= 50 and current_generation % 4 == 0:
                 for agent in agents:
                     agent.cities = pathManipulator.two_opt(agent.cities, agent.evaluateAgent(pathManipulator.copy))
                 children = []
@@ -399,7 +399,7 @@ class r0736356:
                     child = r0736356.orderedCrossoverVariant(parent1,parent2,current_generation)
                     children.append(child)
                 agents = agents + children
-            elif population_size < 200 and (current_generation % 4 == 0 or current_generation % 4 == 2):
+            elif population_size < 50 and (current_generation % 4 == 0 or current_generation % 4 == 2):
                 arr = []
                 for _ in range(population_size // 10):
                     rand = random.randrange(0, population_size)
